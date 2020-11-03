@@ -12,9 +12,31 @@ struct ContentView: View {
     let animals: [Animal] = Bundle.main.decode(K.Data.animalsJson)
     let haptics = UIImpactFeedbackGenerator(style: .medium)
     
-    let gridLayout: [GridItem] = Array(repeating: GridItem(.flexible()), count: 2)
+    //Basic 2 column grid layout
+//    let gridLayout: [GridItem] = Array(repeating: GridItem(.flexible()), count: 2)
     
+    @State private var gridLayout: [GridItem] = [GridItem(.flexible())]
+    @State private var gridColumn: Int = 1
+    @State private var toolbarIcon: String = K.Icon.squareGrid2x2
     @State private var isGridViewActive: Bool = false
+    
+    // MARK: - FUNCTIONS
+    func gridSwitch() {
+        gridLayout = Array(repeating: .init(.flexible()), count: gridLayout.count % 3 + 1)
+        gridColumn = gridLayout.count
+        print("Grid Number: \(gridLayout.count)")
+        // TOOLBAR IMAGE
+        switch gridColumn {
+        case 1:
+            toolbarIcon = K.Icon.squareGrid2x2
+        case 2:
+            toolbarIcon = K.Icon.squareGrid3x2
+        case 3:
+            toolbarIcon = K.Icon.rectangleGrid1x2
+        default:
+            toolbarIcon = K.Icon.squareGrid2x2
+        }
+    }
     
     // MARK: - BODY
     
@@ -56,7 +78,7 @@ struct ContentView: View {
                             isGridViewActive = false
                             haptics.impactOccurred()
                         }) {
-                            Image(systemName: "square.fill.text.grid.1x2")
+                            Image(systemName: K.Icon.squareFillTextGrid1x2)
                                 .font(.title2)
                                 .foregroundColor(isGridViewActive ? .primary : .accentColor)
                         }
@@ -65,8 +87,9 @@ struct ContentView: View {
                             print("Gridview is activated")
                             isGridViewActive = true
                             haptics.impactOccurred()
+                            gridSwitch()
                         }) {
-                            Image(systemName: "square.grid.2x2")
+                            Image(systemName: toolbarIcon)
                                 .font(.title2)
                                 .foregroundColor(isGridViewActive ? .accentColor : .primary)
                         }
